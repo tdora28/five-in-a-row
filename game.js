@@ -1,4 +1,5 @@
-const dimensions = 5; // The initial board size is dimensions x dimensions
+let dimensionX = 5;
+let dimensionY = 5;
 const winLength = 5; // How many stones needed to win
 const board = []; // The game board
 let turn = 'X'; // Starting player. The other player is 'O'.
@@ -9,9 +10,9 @@ function initializeGame() {
   // Each of the inner arrays should contain five empty strings.
   // Use the variable dimensions instead of hard coding the number five.
 
-  for (let i = 0; i < dimensions; i++) {
+  for (let i = 0; i < dimensionY; i++) {
     let row = [];
-    for (let j = 0; j < dimensions; j++) {
+    for (let j = 0; j < dimensionX; j++) {
       row.push('');
     }
     board.push(row);
@@ -41,6 +42,33 @@ function expandBoard(direction) {
   // TODO: Task 2 B
   // This function adds a column or a row to the board
   // depending on the direction it gets as an argument.
+  if (direction === 'LEFT') {
+    dimensionX++;
+    board.forEach((row) => {
+      row.unshift('');
+    });
+  } else if (direction === 'RIGHT') {
+    dimensionX++;
+    board.forEach((row) => {
+      row.push('');
+    });
+  }
+
+  if (direction === 'UP') {
+    dimensionY++;
+    let row = [];
+    for (let i = 0; i < dimensionX; i++) {
+      row.push('');
+    }
+    board.unshift(row);
+  } else if (direction === 'DOWN') {
+    dimensionY++;
+    let row = [];
+    for (let i = 0; i < dimensionX; i++) {
+      row.push('');
+    }
+    board.push(row);
+  }
 
   drawBoard();
 }
@@ -59,20 +87,17 @@ function handleClick(event) {
   // TODO: Task 2 A
   // Implement the conditions when the board should be expanded.
   // Ie when the player clicks the extreme rows or columns.
-  /* 
-    if ( ) {
-        expandBoard('LEFT');
-    }
-    else if ( ) {
-        expandBoard('RIGHT');
-    }
-    if ( ) {
-        expandBoard('UP');
-    }
-    else if ( ) {
-        expandBoard('DOWN');
-    }
-    */
+
+  if (x == 0) {
+    expandBoard('LEFT');
+  } else if (x == dimensionX - 1) {
+    expandBoard('RIGHT');
+  }
+  if (y == 0) {
+    expandBoard('UP');
+  } else if (y == dimensionY - 1) {
+    expandBoard('DOWN');
+  }
 
   nextTurn();
 }
@@ -95,8 +120,11 @@ function drawBoard() {
   const boardDiv = document.getElementById('board');
   boardDiv.innerHTML = ''; // Clear the board first!
 
-  for (let y = 0; y < dimensions; y++) {
-    for (let x = 0; x < dimensions; x++) {
+  boardDiv.style.gridTemplateRows = `repeat(${dimensionY}, 1fr)`;
+  boardDiv.style.gridTemplateColumns = `repeat(${dimensionX}, 1fr)`;
+
+  for (let y = 0; y < dimensionY; y++) {
+    for (let x = 0; x < dimensionX; x++) {
       createSquare(boardDiv, x, y);
     }
   }
