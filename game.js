@@ -1,5 +1,6 @@
 const winnerAnnouncement = document.querySelector('#winnerAnnouncement');
 const winner = document.querySelector('#winner');
+const newgameBtn = document.querySelector('#newgame');
 
 let dimensionX = 5;
 let dimensionY = 5;
@@ -78,6 +79,11 @@ function checkWin(x, y) {
     if (counter === winLength) {
       winnerAnnouncement.classList.remove('hidden');
       winner.textContent = character;
+
+      newgameBtn.classList.remove('hidden');
+      newgameBtn.addEventListener('click', () => {
+        location.reload();
+      });
     }
   };
 
