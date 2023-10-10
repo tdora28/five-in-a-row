@@ -1,3 +1,6 @@
+const winnerAnnouncement = document.querySelector('#winnerAnnouncement');
+const winner = document.querySelector('#winner');
+
 let dimensionX = 5;
 let dimensionY = 5;
 const winLength = 5; // How many stones needed to win
@@ -36,6 +39,53 @@ function checkWin(x, y) {
   // If any of them contain same character as the current turn,
   // keep on checking to that direction -- and to the opposite!
   // Number of the stones needed is in variable winLength.
+
+  x = parseInt(x);
+  y = parseInt(y);
+
+  // Character at current position
+  const character = turn;
+
+  const onboard = (x, y) => {
+    if (x < 0 || x >= dimensionX || y < 0 || y >= dimensionY) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const countChar = (x, y, dx, dy) => {
+    // Counter for win!
+    // Starts at -1 because the while loops count the clicked square twice
+    let counter = -1;
+
+    let i = x;
+    let j = y;
+    while (onboard(i, j) && board[j][i] === character) {
+      i = i + dx;
+      j = j + dy;
+      counter++;
+    }
+
+    i = x;
+    j = y;
+    while (onboard(i, j) && board[j][i] === character) {
+      i = i + dx * -1;
+      j = j + dy * -1;
+      counter++;
+    }
+
+    if (counter === winLength) {
+      winnerAnnouncement.classList.remove('hidden');
+      winner.textContent = character;
+    }
+  };
+
+  // Horizontal, vertical, diagonal (to bottom right), and diagonal (to bottom left) checks
+  countChar(x, y, 1, 0);
+  countChar(x, y, 0, 1);
+  countChar(x, y, 1, 1);
+  countChar(x, y, -1, 1);
 }
 
 function expandBoard(direction) {
