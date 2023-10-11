@@ -1,12 +1,13 @@
-const winnerAnnouncement = document.querySelector('#winnerAnnouncement');
-const winner = document.querySelector('#winner');
-const newgameBtn = document.querySelector('#newgame');
+const winnerAnnouncement = document.querySelector("#winnerAnnouncement");
+const winner = document.querySelector("#winner");
+const newgameBtn = document.querySelector("#newgame");
 
 let dimensionX = 5;
 let dimensionY = 5;
 const winLength = 5; // How many stones needed to win
 const board = []; // The game board
-let turn = 'X'; // Starting player. The other player is 'O'.
+let turn = "X"; // Starting player. The other player is 'O'.
+let isGameOver = false;
 
 function initializeGame() {
   // TODO: Task 1
@@ -17,19 +18,19 @@ function initializeGame() {
   for (let i = 0; i < dimensionY; i++) {
     let row = [];
     for (let j = 0; j < dimensionX; j++) {
-      row.push('');
+      row.push("");
     }
     board.push(row);
   }
 }
 
 function nextTurn() {
-  if (turn === 'X') {
-    turn = 'O';
+  if (turn === "X") {
+    turn = "O";
   } else {
-    turn = 'X';
+    turn = "X";
   }
-  let turnLabel = document.getElementById('turn');
+  let turnLabel = document.getElementById("turn");
   turnLabel.textContent = turn;
 }
 
@@ -77,11 +78,13 @@ function checkWin(x, y) {
     }
 
     if (counter === winLength) {
-      winnerAnnouncement.classList.remove('hidden');
+      winnerAnnouncement.classList.remove("hidden");
       winner.textContent = character;
 
-      newgameBtn.classList.remove('hidden');
-      newgameBtn.addEventListener('click', () => {
+      isGameOver = true;
+
+      newgameBtn.classList.remove("hidden");
+      newgameBtn.addEventListener("click", () => {
         location.reload();
       });
     }
@@ -98,35 +101,35 @@ function expandBoard(direction) {
   // TODO: Task 2 B
   // This function adds a column or a row to the board
   // depending on the direction it gets as an argument.
-  if (direction === 'LEFT') {
+  if (direction === "LEFT") {
     dimensionX++;
     board.forEach((row) => {
-      row.unshift('');
+      row.unshift("");
     });
-  } else if (direction === 'RIGHT') {
+  } else if (direction === "RIGHT") {
     dimensionX++;
     board.forEach((row) => {
-      row.push('');
+      row.push("");
     });
   }
 
-  if (direction === 'UP') {
+  if (direction === "UP") {
     dimensionY++;
     let row = [];
     for (let i = 0; i < dimensionX; i++) {
-      row.push('');
+      row.push("");
     }
     board.unshift(row);
-  } else if (direction === 'DOWN') {
+  } else if (direction === "DOWN") {
     dimensionY++;
     let row = [];
     for (let i = 0; i < dimensionX; i++) {
-      row.push('');
+      row.push("");
     }
     board.push(row);
   }
 
-  drawBoard();
+  drawBoard(isGameOver);
 }
 
 function handleClick(event) {
@@ -134,9 +137,11 @@ function handleClick(event) {
   let x = square.dataset.x;
   let y = square.dataset.y;
 
-  board[y][x] = turn;
-  square.textContent = turn;
-  square.removeEventListener('click', handleClick);
+  if (!isGameOver) {
+    board[y][x] = turn;
+    square.textContent = turn;
+    square.removeEventListener("click", handleClick);
+  }
 
   checkWin(x, y);
 
@@ -145,36 +150,42 @@ function handleClick(event) {
   // Ie when the player clicks the extreme rows or columns.
 
   if (x == 0) {
-    expandBoard('LEFT');
+    expandBoard("LEFT");
   } else if (x == dimensionX - 1) {
-    expandBoard('RIGHT');
+    expandBoard("RIGHT");
   }
   if (y == 0) {
-    expandBoard('UP');
+    expandBoard("UP");
   } else if (y == dimensionY - 1) {
-    expandBoard('DOWN');
+    expandBoard("DOWN");
   }
 
-  nextTurn();
+  if (!isGameOver) {
+    nextTurn();
+  }
 }
 
 function createSquare(boardDiv, x, y) {
-  let element = document.createElement('div');
-  element.setAttribute('class', 'square');
-  element.setAttribute('data-x', x);
-  element.setAttribute('data-y', y);
+  let element = document.createElement("div");
+  element.setAttribute("class", "square");
+  element.setAttribute("data-x", x);
+  element.setAttribute("data-y", y);
   element.textContent = board[y][x];
 
-  if (board[y][x] === '') {
-    element.addEventListener('click', handleClick);
+  if (board[y][x] === "") {
+    element.addEventListener("click", handleClick);
   }
 
   boardDiv.appendChild(element);
 }
 
-function drawBoard() {
-  const boardDiv = document.getElementById('board');
-  boardDiv.innerHTML = ''; // Clear the board first!
+function drawBoard(gamestate) {
+  if (gamestate) {
+    return;
+  }
+
+  const boardDiv = document.getElementById("board");
+  boardDiv.innerHTML = ""; // Clear the board first!
 
   boardDiv.style.gridTemplateRows = `repeat(${dimensionY}, 1fr)`;
   boardDiv.style.gridTemplateColumns = `repeat(${dimensionX}, 1fr)`;
@@ -187,4 +198,4 @@ function drawBoard() {
 }
 
 initializeGame();
-drawBoard();
+drawBoard(isGameOver);
