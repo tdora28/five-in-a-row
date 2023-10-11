@@ -1,4 +1,4 @@
-const winnerAnnouncement = document.querySelector('#winnerAnnouncement');
+const winnerAnnouncement = document.querySelector('.overlay');
 const winner = document.querySelector('#winner');
 const newgameBtn = document.querySelector('#newgame');
 
@@ -83,7 +83,6 @@ function checkWin(x, y) {
 
       isGameOver = true;
 
-      newgameBtn.classList.remove('hidden');
       newgameBtn.addEventListener('click', () => {
         location.reload();
       });
